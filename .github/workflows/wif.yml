@@ -3,16 +3,13 @@ on:
   push:
     branches:
       - main
-
-jobs:
-  job_id:
-    build:
-      runs-on: ubuntu-latest
-
-    permissions:
+permissions:
       contents: 'read'
       id-token: 'write'
-    
+jobs:
+  wif-testing:
+	  name: saad-test-wif
+		runs-on: ubuntu-latest
     steps:
     - uses: 'actions/checkout@v3'
 
