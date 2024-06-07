@@ -1,0 +1,23 @@
+jobs:
+  job_id:
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    
+    steps:
+    - uses: 'actions/checkout@v3'
+
+    - id: 'auth'
+      name: 'Authenticate to GCP'
+      uses: 'google-github-actions/auth@v1'
+      with:
+        workload_identity_provider: ''
+        service_account: ''
+
+    - name: 'Setup Cloud SDK'
+      uses: 'google-github-actions/setup-gcloud@v1'
+
+    - id: 'gcloud'
+      name: 'gcloud'
+      run: |-
+       gcloud secrets version access "latest" --secret "my-secret"
