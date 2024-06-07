@@ -18,7 +18,7 @@ jobs:
       uses: 'google-github-actions/auth@v1'
       with:
         token_format: 'access_token'
-        workload_identity_provider: '/projects/103365112501/locations/global/workloadIdentityPools/githubactions/providers/github'
+        workload_identity_provider: 'projects/103365112501/locations/global/workloadIdentityPools/githubactions/providers/github'
         service_account: 'github-actions@eurus-project-dev.iam.gserviceaccount.com'
 
     - name: 'Setup Cloud SDK'
