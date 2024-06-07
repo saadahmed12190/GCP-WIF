@@ -1,6 +1,8 @@
 name: Get secrets from secret manager GCP
-on: 
-  workflow_dispatch
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   job_id:
