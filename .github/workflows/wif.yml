@@ -1,4 +1,4 @@
-name: Get secrets from secret manager
+name: Get secrets from secret manager GCP
 on: 
   workflow_dispatch
 
