@@ -1,30 +1,47 @@
-name: Get secrets from secret manager GCP
+name: vpc-ci-dev-list
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch
+  # push:
+  #   branches:
+  #     - main
+  #   paths:
+  #     - "iac/terraform/vpc/*"
+  #     - "iac/terraform/vpc/dev/**"
+defaults:
+  run:
+    shell: bash
+    working-directory: ./iac/terraform/vpc
 permissions:
-      contents: 'read'
-      id-token: 'write'
+  contents: read
 jobs:
-  wif-testing:
-    name: saad-test-wif
+  deploy-dev:
     runs-on: ubuntu-latest
+    # These permissions are needed to interact with GitHub's OIDC Token endpoint. New
+    permissions:
+      id-token: write
+      contents: read
     steps:
-    - uses: 'actions/checkout@v3'
-
-    - id: 'auth'
-      name: 'Authenticate to GCP'
-      uses: 'google-github-actions/auth@v1'
-      with:
-        token_format: 'access_token'
-        workload_identity_provider: 'projects/103365112501/locations/global/workloadIdentityPools/githubactions/providers/github'
-        service_account: 'github-actions@eurus-project-dev.iam.gserviceaccount.com'
-
-    - name: 'Setup Cloud SDK'
-      uses: 'google-github-actions/setup-gcloud@v1'
-
-    - id: 'gcloud'
-      name: 'gcloud'
-      run: |-
-       gcloud secrets version access "latest" --secret "my-secret"
+      - name: "Checkout"
+        uses: actions/checkout@v3
+      - name: Configure GCP credentials
+        id: auth
+        uses: google-github-actions/auth@v1
+        with:
+          # Value from command: gcloud iam workload-identity-pools providers describe github-actions --workload-identity-pool="github-actions-pool" --location="global"
+          workload_identity_provider: "projects/103365112501/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions"
+          # create_credentials_file: true
+          service_account: "github-actions-sa@eurus-project-dev.iam.gserviceaccount.com"
+          token_format: "access_token"
+          access_token_lifetime: "120s"
+      - name: Echo stuff
+        run: printenv
+      - name: Setup GCloud SDK
+        uses: "google-github-actions/setup-gcloud@v1"
+        with:
+          version: ">= 363.0.0"
+      - name: List Compute Networks
+        run: |-
+          echo "Displaying networks"
+          gcloud compute networks list
+          echo "Displaying subnets for my-awesome-vpc-network network"
+          gcloud compute networks subnets list --network my-awesome-vpc-network
